@@ -12,7 +12,6 @@ The project aims to create a contact database system using ```EdgeDB 3.0```, ```
 - Delete: Users can remove contacts from the list if they are no longer required.
 
 # Try out this sample:
-- Go to dbschema folder.
 - Execute the following command 
 ```
 edgedb project init --server-instance contact-app.
