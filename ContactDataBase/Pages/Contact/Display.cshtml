@@ -1,0 +1,72 @@
+﻿@page
+@model DisplayModel
+@{
+}
+<br>
+@if (TempData.ContainsKey("SuccessMessage"))
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>@TempData["SuccessMessage"]</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close"></button>
+    </div>
+}
+<h2>List of Contacts</h2>
+<div class="mb-3">
+    <a class="btn btn-primary btn-sm" href="Create">New Contact</a>
+</div>
+
+<form class="input-group">
+    <input type="text" name="searchTerm" id="searchTerm" class="form-control" placeholder="Search by name">
+</form>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Date of Birth</th>
+            <th>Marriage Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody id="contactTableBody">
+        @foreach (var item in Model.ContactInfoList)
+        {
+            <tr>
+                <td>@item.FirstName</td>
+                <td>@item.LastName</td>
+                <td>@item.Email</td>
+                <td>@item.Title</td>
+                <td>@item.Description</td>
+                <td>@item.DateBirth.DateOnly</td>
+                <td>@item.MarriageStatus</td>
+                <td>
+                    <a class="btn btn-primary btn-sm" href="Edit?id=@item.Id">Edit</a>
+                    <a class="btn btn-primary btn-sm" href="Delete?id=@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section scripts {
+    <script src="https://unpkg.com/htmx.org@1.9.3" integrity="sha384-lVb3Rd/Ca0AxaoZg5sACe8FJKF0tnUgR2Kd7ehUOG5GCcROv5uBIZsOqovBAcWua" crossorigin="anonymous"></script>
+    <script>
+        document.getElementById('searchTerm').addEventListener('input', function () {
+            var searchTerm = this.value;
+            var url = '@Url.Page("Display")';
+            var tableBody = document.getElementById('contactTableBody');
+
+            fetch(`${url}?handler=Search&searchTerm=${encodeURIComponent(searchTerm)}`)
+                .then(response => response.text())
+                .then(data => {
+                    tableBody.innerHTML = data;
+                })
+                .catch(error => console.error('Error fetching search results:', error));
+        });
+    </script>
+}
