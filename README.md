@@ -1,4 +1,7 @@
 # Contact database with EdgeDB
+
+https://github.com/Rofaydaaa/ConatactDB-EdgeDB/assets/125312170/eafbbe28-51d2-4552-bd90-494336369339
+
 The project aims to create a contact database system using EdgeDB 3.0, ASP.NET Core Razor Pages, and Ajax to allow us to perform real-time searches without the need to reload the entire web page. 
 
 # Functionality:
