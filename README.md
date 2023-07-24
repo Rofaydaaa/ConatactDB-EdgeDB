@@ -2,7 +2,7 @@
 
 https://github.com/Rofaydaaa/ConatactDB-EdgeDB/assets/125312170/eafbbe28-51d2-4552-bd90-494336369339
 
-The project aims to create a contact database system using EdgeDB 3.0, ASP.NET Core Razor Pages, and Ajax to allow us to perform real-time searches without the need to reload the entire web page. 
+The project aims to create a contact database system using ```EdgeDB 3.0```, ```ASP.NET Core Razor Pages```, and ```Ajax``` to allow us to perform real-time searches without the need to reload the entire web page. 
 
 # Functionality:
 - Create: Users can add new contacts by filling out the form with the required details and saving the information to EdgeDB.
@@ -18,7 +18,10 @@ The project aims to create a contact database system using EdgeDB 3.0, ASP.NET C
 edgedb project init --server-instance contact-app.
 ```
 - Move one directory up.
-- Execute the following command dotnet watch.
+- Execute the following command
+```
+dotnet watch
+```
 - Open your browser to http://localhost:XXXX.
 
 # How to clean up
