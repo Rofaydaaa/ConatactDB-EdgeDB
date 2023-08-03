@@ -54,7 +54,7 @@ public enum Title
 public enum RoleUser
 {
     Admin,
-	Normal
+	Normal,
 }
 
 public record ContactInfo(
