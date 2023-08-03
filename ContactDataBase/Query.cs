@@ -41,7 +41,7 @@ namespace ContactDataBase
                 {"marriage_status", contactInfoInput.MarriageStatus},
                 {"role_user", contactInfoInput.RoleUser}
             });
-			
+
         }
         public async Task UpdateContactInfoInputWithId(string id, ContactInfoInput contactInfoInput)
         {
