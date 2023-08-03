@@ -2,14 +2,17 @@
 
 https://github.com/Rofaydaaa/ConatactDB-EdgeDB/assets/125312170/eafbbe28-51d2-4552-bd90-494336369339
 
-The project aims to create a contact database system using ```EdgeDB 3.0```, ```ASP.NET Core Razor Pages```, and ```Ajax``` to allow us to perform real-time searches without the need to reload the entire web page. 
+The project aims to create a contact database system using ```EdgeDB 3.0```, ```ASP.NET Core Razor Pages```, and ```Ajax``` <small>(Ajax allows us to perform real-time searches without the need to reload the entire web page).</small>
 
 # Functionality:
-- Create: Users can add new contacts by filling out the form with the required details and saving the information to EdgeDB.
+- Two users Roles (Admin and Normal)
+#### All users can:
 - List: The system will display a list of all entered contacts with relevant information.
 - Search Filter: The list of contacts will be equipped with a search filter, allowing users to search for specific contacts based on their first name and last name.
-- Update: Users can edit existing contact information.
-- Delete: Users can remove contacts from the list if they are no longer required.
+#### Only Admin can:
+- Create: Add new contacts by filling out the form with the required details and saving the information to EdgeDB.
+- Update: Edit existing contact information.
+- Delete: Remove contacts from the list if they are no longer required.
 
 # Try out this sample:
 - Execute the following command 
