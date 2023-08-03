@@ -19,6 +19,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 	});
 builder.Services.AddScoped<IPasswordHasher<ContactInfoInput>, PasswordHasher<ContactInfoInput>>();
 builder.Services.AddScoped<ContactDataBase.Query>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -56,7 +57,8 @@ public enum RoleUser
 	Normal
 }
 
-public record ContactInfo(Guid Id, 
+public record ContactInfo(
+	Guid Id, 
 	string FirstName, 
 	string LastName, 
 	string Email, 
