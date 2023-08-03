@@ -1,25 +1,24 @@
 using EdgeDB;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Data;
 
 namespace ContactDataBase.Pages.Contact
 {
+    [Authorize(Roles = "Admin")]
     public class DeleteModel : PageModel
     {
-        private readonly EdgeDBClient _client;
+        private readonly Query _query;
         public string SuccessMessage { get; set; } = "";
 
-        public DeleteModel(EdgeDBClient client)
+        public DeleteModel(Query query)
         {
-            _client = client;
+            _query = query;
         }
         public async Task<IActionResult> OnGet()
         {
-            string id = Request.Query["Id"];
-            await _client.QuerySingleAsync<ContactInfo>($@"
-				delete ContactInfo
-				filter .id = <uuid>""{id}""
-			");
+            await _query.DeleteContactInfoInputWithId(Request.Query["Id"]);
             return RedirectToPage("Display");
         }
     }

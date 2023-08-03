@@ -10,6 +10,13 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close"></button>
     </div>
 }
+else if (TempData.ContainsKey("ErrorMessage"))
+{
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <strong>@TempData["ErrorMessage"]</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close"></button>
+    </div>
+}
 <h2>List of Contacts</h2>
 <div class="mb-3">
     <a class="btn btn-primary btn-sm" href="Create">New Contact</a>
@@ -26,11 +33,13 @@
             <th>First Name</th>
             <th>Last Name</th>
             <th>Email</th>
+            <th>Username</th>
             <th>Title</th>
             <th>Description</th>
             <th>Date of Birth</th>
             <th>Marriage Status</th>
             <th>Action</th>
+            <th>Role</th>
         </tr>
     </thead>
     <tbody id="contactTableBody">
@@ -40,10 +49,12 @@
                 <td>@item.FirstName</td>
                 <td>@item.LastName</td>
                 <td>@item.Email</td>
+                <td>@item.Username</td>
                 <td>@item.Title</td>
                 <td>@item.Description</td>
                 <td>@item.DateBirth.DateOnly</td>
                 <td>@item.MarriageStatus</td>
+                <td>@item.RoleUser</td>
                 <td>
                     <a class="btn btn-primary btn-sm" href="Edit?id=@item.Id">Edit</a>
                     <a class="btn btn-primary btn-sm" href="Delete?id=@item.Id">Delete</a>
@@ -53,7 +64,7 @@
     </tbody>
 </table>
 
-@section scripts {
+ @section scripts {
     <script src="https://unpkg.com/htmx.org@1.9.3" integrity="sha384-lVb3Rd/Ca0AxaoZg5sACe8FJKF0tnUgR2Kd7ehUOG5GCcROv5uBIZsOqovBAcWua" crossorigin="anonymous"></script>
     <script>
         document.getElementById('searchTerm').addEventListener('input', function () {

@@ -1,19 +1,21 @@
 using EdgeDB;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace ContactDataBase.Pages.Contact
 {
+    [Authorize]
     public class DisplayModel : PageModel
     {
         [BindProperty(SupportsGet = true)]
         public string SearchTerm { get; set; }
         public List<ContactInfo> ContactInfoList { get; set; } = new List<ContactInfo>();
-        private readonly EdgeDBClient _client;
+        private readonly Query _query;
 
-        public DisplayModel(EdgeDBClient client)
+        public DisplayModel(Query query)
         {
-            _client = client;
+            _query = query;
         }
 
         public async Task OnGet()
@@ -41,18 +43,7 @@ namespace ContactDataBase.Pages.Contact
 
         public async Task GetContactList()
         {
-            ContactInfoList = (await _client.QueryAsync<ContactInfo>(@"
-                SELECT ContactInfo {
-                    first_name,
-                    last_name,
-                    email,
-                    title,
-                    description,
-                    date_birth,
-                    marriage_status
-                }
-                ORDER BY .first_name
-            ")).ToList();
+            ContactInfoList = await _query.GetAllContactList();
         }
     }
 }

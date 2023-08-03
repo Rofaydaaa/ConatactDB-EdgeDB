@@ -1,4 +1,7 @@
+using ContactDataBase.Pages.Contact;
 using EdgeDB;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +11,14 @@ builder.Services.AddEdgeDB(EdgeDBConnection.FromInstanceName("contact-app"), con
 {
 	config.SchemaNamingStrategy = INamingStrategy.SnakeCaseNamingStrategy;
 });
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/SignIn";
+		options.AccessDeniedPath = "/Account/AccessDenied";
+	});
+builder.Services.AddScoped<IPasswordHasher<ContactInfoInput>, PasswordHasher<ContactInfoInput>>();
+builder.Services.AddScoped<ContactDataBase.Query>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -23,6 +34,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();
@@ -38,4 +50,20 @@ public enum Title
 	Prof,
 }
 
-public record ContactInfo(Guid Id, string FirstName, string LastName, string Email, Title Title, string Description, EdgeDB.DataTypes.LocalDate DateBirth, bool MarriageStatus);
+public enum RoleUser
+{
+    Admin,
+	Normal
+}
+
+public record ContactInfo(Guid Id, 
+	string FirstName, 
+	string LastName, 
+	string Email, 
+	string Username,
+	string Password,
+	Title Title, 
+	string Description,
+	EdgeDB.DataTypes.LocalDate DateBirth,
+	bool MarriageStatus,
+	RoleUser RoleUser);

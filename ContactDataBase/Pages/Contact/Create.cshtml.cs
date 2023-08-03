@@ -2,24 +2,28 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
-using EdgeDB;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ContactDataBase.Pages.Contact
 {
+    [Authorize(Roles = "Admin")]
     public class CreateModel : PageModel
     {
         [BindProperty]
         public ContactInfoInput ContactInfoInput { get; set; }
         public string SuccessMessage { get; set; } = "";
         public string ErrorMessage { get; set; } = "";
-        private readonly EdgeDBClient _client;
+        private readonly Query _query;
+        private readonly IPasswordHasher<ContactInfoInput> _passwordHasher;
 
-        public CreateModel(EdgeDBClient client)
+        public CreateModel(Query query, IPasswordHasher<ContactInfoInput> passwordHasher)
         {
-            _client = client;
+            _query = query;
+            _passwordHasher = passwordHasher;
         }
-
         public async Task<IActionResult> OnPost()
         {
             if (!ModelState.IsValid)
@@ -27,20 +31,14 @@ namespace ContactDataBase.Pages.Contact
                 ErrorMessage = "Data validation failed";
                 return Page();
             }
-
-            string formattedDateOfBirth = ContactInfoInput.DateOfBirth.ToString("yyyy-MM-dd");
-            await _client.ExecuteAsync($@"
-				INSERT ContactInfo {{
-					first_name := ""{ContactInfoInput.FirstName}"",
-					last_name := ""{ContactInfoInput.LastName}"",
-					email := ""{ContactInfoInput.Email}"",
-					title := ""{ContactInfoInput.Title}"",
-					description := ""{ContactInfoInput.Description}"",
-				    date_birth := cal::to_local_date(""{formattedDateOfBirth}""),
-					marriage_status := {ContactInfoInput.MarriageStatus}
-				}}
-			");
-
+            bool isUsernameTaken = await _query.IsUsernameTaken(ContactInfoInput.Username);
+            if (isUsernameTaken)
+            {
+                ErrorMessage = "Username already Taken";
+                return Page();
+            }
+            ContactInfoInput.Password = _passwordHasher.HashPassword(ContactInfoInput, ContactInfoInput.Password);
+            await _query.InsertContactInfoInput(ContactInfoInput);
             SuccessMessage = "Contact is added successfully";
             TempData["SuccessMessage"] = SuccessMessage;
             return RedirectToPage("Display");
@@ -61,10 +59,17 @@ namespace ContactDataBase.Pages.Contact
         [CustomEmailFormat(ErrorMessage = "Invalid email format. Please enter a valid email address.")]
         public string Email { get; set; }
 
+        [Required(ErrorMessage = "The password is required.")]
+        public string Username { get; set; }
+
+        [Required(ErrorMessage = "The password is required.")]
+        public string Password { get; set; }
+
         public Title Title { get; set; }
         public string Description { get; set; }
         public DateTime DateOfBirth { get; set; }
         public bool MarriageStatus { get; set; }
+        public RoleUser RoleUser { get; set; }
 
         public static ContactInfoInput FromContactInfo(ContactInfo contactInfo)
         {
@@ -74,10 +79,13 @@ namespace ContactDataBase.Pages.Contact
                 FirstName = contactInfo.FirstName,
                 LastName = contactInfo.LastName,
                 Email = contactInfo.Email,
+                Username = contactInfo.Username,
+                Password = contactInfo.Password,
                 Title = contactInfo.Title,
                 Description = contactInfo.Description,
                 DateOfBirth = new DateTime(contactInfo.DateBirth.DateOnly.Year, contactInfo.DateBirth.DateOnly.Month, contactInfo.DateBirth.DateOnly.Day),
-                MarriageStatus = contactInfo.MarriageStatus
+                MarriageStatus = contactInfo.MarriageStatus,
+                RoleUser = contactInfo.RoleUser
             };
         }
     }

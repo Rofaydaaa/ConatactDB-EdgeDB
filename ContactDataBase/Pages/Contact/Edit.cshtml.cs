@@ -1,39 +1,27 @@
 using EdgeDB;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Data;
 
 namespace ContactDataBase.Pages.Contact
 {
+    [Authorize(Roles = "Admin")]
     public class EditModel : PageModel
     {
         [BindProperty]
         public ContactInfoInput ContactInfoInput { get; set; }
         public string SuccessMessage { get; set; } = "";
         public string ErrorMessage { get; set; } = "";
-        private readonly EdgeDBClient _client;
+        private readonly Query _query;
 
-        public EditModel(EdgeDBClient client)
+        public EditModel(Query query)
         {
-            _client = client;
+            _query = query;
         }
-
         public async Task OnGet()
         {
-            string id = Request.Query["Id"];
-            ContactInfo currentContactInfo = await _client.QuerySingleAsync<ContactInfo>($@"
-				SELECT ContactInfo {{
-					first_name,
-					last_name,
-					email,
-					title,
-					description,
-					date_birth,
-					marriage_status
-				}}
-				filter .id = <uuid>""{id}""
-				");
-
-            ContactInfoInput = ContactInfoInput.FromContactInfo(currentContactInfo);
+            ContactInfoInput = await _query.GetContactWithId(Request.Query["Id"]);
         }
 
         public async Task<IActionResult> OnPost()
@@ -43,22 +31,14 @@ namespace ContactDataBase.Pages.Contact
                 ErrorMessage = "Data validation failed";
                 return Page();
             }
-            string id = Request.Query["Id"];
-            string formattedDateOfBirth = ContactInfoInput.DateOfBirth.ToString("yyyy-MM-dd");
-            await _client.ExecuteAsync($@"
-				update ContactInfo 
-				filter .id = <uuid>""{id}""
-				set {{
-					first_name := ""{ContactInfoInput.FirstName}"",
-					last_name := ""{ContactInfoInput.LastName}"",
-					email := ""{ContactInfoInput.Email}"",
-					title := ""{ContactInfoInput.Title}"",
-					description := ""{ContactInfoInput.Description}"",
-				    date_birth := cal::to_local_date(""{formattedDateOfBirth}""),
-					marriage_status := {ContactInfoInput.MarriageStatus}
-				}}
-			");
-
+            bool isUsernameTaken = await _query.IsUsernameTaken(ContactInfoInput.Username);
+            var previousContactInfo = await _query.GetContactWithId(Request.Query["Id"]);
+            if (previousContactInfo.Username != ContactInfoInput.Username && isUsernameTaken)
+            {
+                ErrorMessage = "Username already Taken";
+                return Page();
+            }
+            await _query.UpdateContactInfoInputWithId(Request.Query["Id"], ContactInfoInput);
             SuccessMessage = "Contact is updated successfully";
             TempData["SuccessMessage"] = SuccessMessage;
             return RedirectToPage("Display");
