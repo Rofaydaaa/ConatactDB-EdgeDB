@@ -81,7 +81,7 @@ namespace ContactDataBase
         public async Task<ContactInfoInput> GetContactWithId(string id)
         {
             ContactInfo? currentContactInfo = await _client.QuerySingleAsync<ContactInfo>($@"
-                SELECT ContactInfo {
+                SELECT ContactInfo {{
                     first_name,
                     last_name,
                     email,
@@ -92,7 +92,7 @@ namespace ContactDataBase
                     date_birth,
                     marriage_status,
                     role_user
-                }
+                }}
                 filter .id = <uuid>""{id}""
             ");
 
@@ -102,11 +102,11 @@ namespace ContactDataBase
         public async Task<ContactInfo> GetContactWithUsername(string username)
         {
             return await _client.QuerySingleAsync<ContactInfo>($@"
-                SELECT ContactInfo {
+                SELECT ContactInfo {{
                     username,
                     password,
                     role_user
-                }
+                }}
                 filter .username = ""{username}""
             ");
         }
