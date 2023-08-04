@@ -2,6 +2,16 @@
 
 https://github.com/Rofaydaaa/ConatactDB-EdgeDB/assets/125312170/eafbbe28-51d2-4552-bd90-494336369339
 
+### Authentication and Authorization: 
+
+
+https://github.com/Rofaydaaa/ContactDB-EdgeDB/assets/125312170/f49b35f6-0170-4e2a-b05a-a5d0e7a2a254
+
+
+https://github.com/Rofaydaaa/ContactDB-EdgeDB/assets/125312170/65c8aaac-ac59-4f53-9fa6-954a760169af
+
+
+
 The project aims to create a contact database system using ```EdgeDB 3.0```, ```ASP.NET Core Razor Pages```, and ```Ajax``` <small>(Ajax allows us to perform real-time searches without the need to reload the entire web page).</small>
 
 # Functionality:
