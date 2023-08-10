@@ -27,7 +27,7 @@ The project aims to create a contact database system using ```EdgeDB 3.0```, ```
 # Try out this sample:
 - Execute the following command 
 ```
-edgedb project init --server-instance contact-app.
+edgedb project init --server-instance contact-app
 ```
 - Move one directory up.
 - Execute the following command
